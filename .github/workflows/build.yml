@@ -10,13 +10,15 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
+      with:
+        submodules: recursive # Скачивает зависимости (например, имгуи или дампер), если они подключены
 
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v2
 
     - name: Build Solution
       run: |
-        msbuild *.sln /p:Configuration=Release /p:Platform=x64
+        msbuild CS2_External/CS2_External.vcxproj /p:Configuration=Release /p:Platform=x64
         
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
@@ -25,3 +27,4 @@ jobs:
         path: |
           **/Release/*.exe
           **/Release/*.dll
+          
