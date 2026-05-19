@@ -1,83 +1,80 @@
 #pragma once
 #include <Windows.h>
-#include "Utils/ProcessManager.hpp"
-#include <client_dll.hpp>
-#include <offsets.hpp>
 
 namespace Offset
 {
+    namespace Signatures
+    {
+        const std::string GlobalVars = "";
+        const std::string ViewMatrix = "";
+        const std::string ClientInput = "";
+        const size_t ClientInput_ViewAngle = 0x688;
+        const std::string EntityList = "";
+        const std::string LocalPlayerController = "";
+        const std::string ForceJump = "";
+    }
 
-namespace Signatures
-{
-// Старые сигнатуры отключены, так как они вызывают краш после обновления игры
-const std::string GlobalVars = "";
-const std::string ViewMatrix = "";
-const std::string ClientInput = "";
-const size_t ClientInput_ViewAngle = 0x688;
-const std::string EntityList = "";
-const std::string LocalPlayerController = "";
-const std::string ForceJump = "";
-}
+    // Твои актуальные оффсеты из offsets.json
+    const DWORD EntityList = 38847920; // dwEntityList
+    const DWORD Matrix = 37143280; // dwViewMatrix
+    const DWORD ViewAngle = 37207096; // dwViewAngles
+    const DWORD LocalPlayerController = 36986192; // dwLocalPlayerController
+    const DWORD LocalPlayerPawn = 34146432; // dwLocalPlayerPawn
+    inline DWORD ForceJump = 34119712; // jump из buttons.json
+    const DWORD GlobalVars = 34101128; // dwGlobalVars
+    const DWORD Sensitivity = 37109912; // dwSensitivity
+    const DWORD Sensitivity_Value = 88; // dwSensitivity_sensitivity
 
-// Прямое назначение актуальных адресов из твоего свежего дампера a2x
-const DWORD EntityList = 38847920; // dwEntityList из offsets.json
-const DWORD Matrix = 37143280; // dwViewMatrix из offsets.json
-const DWORD ViewAngle = 37207096; // dwViewAngles из offsets.json
-const DWORD LocalPlayerController = 36986192; // dwLocalPlayerController из offsets.json
-const DWORD LocalPlayerPawn = 34146432; // dwLocalPlayerPawn из offsets.json
-inline DWORD ForceJump = 34119712; // jump из buttons.json
-const DWORD GlobalVars = 34101128; // dwGlobalVars из offsets.json
-const DWORD Sensitivity = 37109912; // dwSensitivity из offsets.json
-const DWORD Sensitivity_Value = 88; // dwSensitivity_sensitivity из offsets.json
+    // Структуры смещений (схемы) автоматически подтянутся из дампера,
+    // но базовые адреса мы зафиксировали выше.
+    inline struct
+    {
+        DWORD m_iHealth = 0x334;
+        DWORD m_iMaxHealth = 0x338;
+        DWORD m_iTeamNum = 0x3BF;
+        DWORD m_bPawnIsAlive = 0x7EC;
+        DWORD m_hPlayerPawn = 0x7E4;
+        DWORD m_iszPlayerName = 0x630;
+        DWORD m_bGlow = 0xBA0;
+        DWORD m_glowColorOverride = 0xBA4;
+    } Entity;
 
-struct
-{
-DWORD m_iHealth = cs2_dumper::schemas::client_dll::C_BaseEntity::m_iHealth;
-DWORD m_iMaxHealth = cs2_dumper::schemas::client_dll::C_BaseEntity::m_iMaxHealth;
-DWORD m_iTeamNum = cs2_dumper::schemas::client_dll::C_BaseEntity::m_iTeamNum;
-DWORD m_bPawnIsAlive = cs2_dumper::schemas::client_dll::CCSPlayerController::m_bPawnIsAlive;
-DWORD m_hPlayerPawn = cs2_dumper::schemas::client_dll::CCSPlayerController::m_hPlayerPawn;
-DWORD m_iszPlayerName = cs2_dumper::schemas::client_dll::CBasePlayerController::m_iszPlayerName;
-DWORD m_bGlow = cs2_dumper::schemas::client_dll::C_BaseModelEntity::m_Glow + cs2_dumper::schemas::client_dll::CGlowProperty::m_bGlowing;
-DWORD m_glowColorOverride = cs2_dumper::schemas::client_dll::C_BaseModelEntity::m_Glow + cs2_dumper::schemas::client_dll::CGlowProperty::m_glowColorOverride;
-}Entity;
+    inline struct
+    {
+        DWORD m_vOldOrigin = 0x127C;
+        DWORD m_pGameSceneNode = 0x310;
+        DWORD BoneArray = 0x1F0;
+        DWORD m_angEyeAngles = 0x1578;
+        DWORD m_pWeaponServices = 0x11A0;
+        DWORD m_iShotsFired = 0x1420;
+        DWORD m_flFlashDuration = 0x1478;
+        DWORD m_iIDEntIndex = 0x15A4;
+        DWORD m_pCameraServices = 0x1138;
+        DWORD m_flFOVSensitivityAdjust = 0x14C8;
+        DWORD m_iFovStart = 0x214;
+        DWORD m_fFlags = 0x3D4;
+        DWORD m_bSpotted = 0x238;
+        DWORD m_bSpottedByMask = 0x240;
+    } Pawn;
 
-struct
-{
-DWORD m_vOldOrigin = cs2_dumper::schemas::client_dll::C_BasePlayerPawn::m_vOldOrigin;
-DWORD m_pGameSceneNode = cs2_dumper::schemas::client_dll::C_BaseEntity::m_pGameSceneNode;
-DWORD BoneArray = cs2_dumper::schemas::client_dll::CSkeletonInstance::m_modelState + 0x80;
-DWORD m_angEyeAngles = cs2_dumper::schemas::client_dll::C_CSPlayerPawn::m_angEyeAngles;
-DWORD m_pWeaponServices = cs2_dumper::schemas::client_dll::C_BasePlayerPawn::m_pWeaponServices;
-DWORD m_iShotsFired = cs2_dumper::schemas::client_dll::C_CSPlayerPawn::m_iShotsFired;
-DWORD m_flFlashDuration = cs2_dumper::schemas::client_dll::C_CSPlayerPawnBase::m_flFlashDuration;
-DWORD m_iIDEntIndex = cs2_dumper::schemas::client_dll::C_CSPlayerPawn::m_iIDEntIndex;
-DWORD m_pCameraServices = cs2_dumper::schemas::client_dll::C_BasePlayerPawn::m_pCameraServices;
-DWORD m_flFOVSensitivityAdjust = cs2_dumper::schemas::client_dll::C_BasePlayerPawn::m_flFOVSensitivityAdjust;
-DWORD m_iFovStart = cs2_dumper::schemas::client_dll::CCSPlayerBase_CameraServices::m_iFOVStart;
-DWORD m_fFlags = cs2_dumper::schemas::client_dll::C_BaseEntity::m_fFlags;
-DWORD m_bSpotted = cs2_dumper::schemas::client_dll::C_CSPlayerPawn::m_entitySpottedState + cs2_dumper::schemas::client_dll::EntitySpottedState_t::m_bSpotted;
-DWORD m_bSpottedByMask = cs2_dumper::schemas::client_dll::C_CSPlayerPawn::m_entitySpottedState + cs2_dumper::schemas::client_dll::EntitySpottedState_t::m_bSpottedByMask;
-}Pawn;
+    inline struct
+    {
+        DWORD m_hActiveWeapon = 0x58;
+        DWORD m_nSubclassID = 0x368;
+        DWORD m_szName = 0xC20;
+    } Weapon;
 
-struct
-{
-DWORD m_hActiveWeapon = cs2_dumper::schemas::client_dll::CPlayer_WeaponServices::m_hActiveWeapon;
-DWORD m_nSubclassID = cs2_dumper::schemas::client_dll::C_BaseEntity::m_nSubclassID;
-DWORD m_szName = cs2_dumper::schemas::client_dll::CCSWeaponBaseVData::m_szName;
-}Weapon;
+    inline struct
+    {
+        DWORD RealTime = 0x00;
+        DWORD FrameCount = 0x04;
+        DWORD MaxClients = 0x10;
+        DWORD IntervalPerTick = 0x14;
+        DWORD CurrentTime = 0x30;
+        DWORD TickCount = 0x44;
+        DWORD IntervalPerTick2 = 0x44;
+        DWORD CurrentMapName = 0x58;
+    } GlobalVar;
 
-struct
-{
-DWORD RealTime = 0x00;
-DWORD FrameCount = 0x04;
-DWORD MaxClients = 0x10;
-DWORD IntervalPerTick = 0x14;
-DWORD CurrentTime = 0x30;
-DWORD TickCount = 0x44;
-DWORD IntervalPerTick2 = 0x44;
-DWORD CurrentMapName = 0x58;
-} GlobalVar;
-
-bool UpdateOffsets() { return true; }
+    inline bool UpdateOffsets() { return true; }
 }
