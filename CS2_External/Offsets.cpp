@@ -1,73 +1,78 @@
 #include "Offsets.h"
 
-DWORD64 SearchOffsets(std::string Signature, DWORD64 ModuleAddress)
+namespace Offset
 {
-	std::vector<DWORD64> TempAddressList;
-	DWORD64 Address = 0;
-	DWORD Offsets = 0;
+    // Отключаем сломанный поиск сигнатур, чтобы не было краша
+    bool UpdateOffsets()
+    {
+        return true; 
+    }
 
-	TempAddressList = ProcessMgr.SearchMemory(Signature, ModuleAddress, ModuleAddress + 0x4000000);
-	
-	if (TempAddressList.size() <= 0)
-		return 0;
+    namespace Signatures
+    {
+        const std::string GlobalVars = "";
+        const std::string ViewMatrix = "";
+        const std::string ClientInput = "";
+        const size_t ClientInput_ViewAngle = 0x688;
+        const std::string EntityList = "";
+        const std::string LocalPlayerController = "";
+        const std::string ForceJump = "";
+    }
 
-	if (!ProcessMgr.ReadMemory<DWORD>(TempAddressList.at(0) + 3, Offsets))
-		return 0;
+    // Жестко прописываем твои новые оффсеты из дампера a2x
+    const DWORD EntityList = 38847920;             
+    const DWORD Matrix = 37143280;                 
+    const DWORD ViewAngle = 37207096;              
+    const DWORD LocalPlayerController = 36986192;   
+    const DWORD LocalPlayerPawn = 34146432;         
+    inline DWORD ForceJump = 34119712;             
+    const DWORD GlobalVars = 34101128;              
+    const DWORD Sensitivity = 37109912;             
+    const DWORD Sensitivity_Value = 88;             
 
-	Address = TempAddressList.at(0) + Offsets + 7;
-	return Address;
-}
+    // Базовые структуры смещений
+    struct EntityOffsets Entity = {
+        .m_iHealth = 0x334,
+        .m_iMaxHealth = 0x338,
+        .m_iTeamNum = 0x3BF,
+        .m_bPawnIsAlive = 0x7EC,
+        .m_hPlayerPawn = 0x7E4,
+        .m_iszPlayerName = 0x630,
+        .m_bGlow = 0xBA0,
+        .m_glowColorOverride = 0xBA4
+    };
 
-bool Offset::UpdateOffsets()
-{
-	DWORD64 ClientDLL = reinterpret_cast<DWORD64>(ProcessMgr.GetProcessModuleHandle("client.dll"));
-	if (ClientDLL == 0)
-		return false;
-	
-	DWORD64 TempAddress = 0;
+    struct PawnOffsets Pawn = {
+        .m_vOldOrigin = 0x127C,
+        .m_pGameSceneNode = 0x310,
+        .BoneArray = 0x1F0,
+        .m_angEyeAngles = 0x1578,
+        .m_pWeaponServices = 0x11A0,
+        .m_iShotsFired = 0x1420,
+        .m_flFlashDuration = 0x1478,
+        .m_iIDEntIndex = 0x15A4,
+        .m_pCameraServices = 0x1138,
+        .m_flFOVSensitivityAdjust = 0x14C8,
+        .m_iFovStart = 0x214,
+        .m_fFlags = 0x3D4,
+        .m_bSpotted = 0x238,
+        .m_bSpottedByMask = 0x240
+    };
 
-	//TempAddress = SearchOffsets(Offset::Signatures::EntityList, ClientDLL);
-	//if (TempAddress == 0)
-	//	return false;
-	//
-	//Offset::EntityList = TempAddress - ClientDLL;
+    struct WeaponOffsets Weapon = {
+        .m_hActiveWeapon = 0x58,
+        .m_nSubclassID = 0x368,
+        .m_szName = 0xC20
+    };
 
-	//TempAddress = SearchOffsets(Offset::Signatures::LocalPlayerController, ClientDLL);
-	//if (TempAddress == 0)
-	//	return false;
-	//
-	//Offset::LocalPlayerController = TempAddress - ClientDLL;
-
-	//TempAddress = SearchOffsets(Offset::Signatures::ViewMatrix, ClientDLL);
-	//if (TempAddress == 0)
-	//	return false;
-	//
-	//Offset::Matrix = TempAddress - ClientDLL;
-
-	//TempAddress = SearchOffsets(Offset::Signatures::GlobalVars, ClientDLL);
-	//if (TempAddress == 0)
-	//	return false;
-	//
-	//Offset::GlobalVars = TempAddress - ClientDLL;
-
-	//TempAddress = SearchOffsets(Offset::Signatures::ClientInput, ClientDLL);
-	//if (TempAddress == 0)
-	//	return false;
-	//if (!ProcessMgr.ReadMemory(TempAddress, TempAddress))
-	//	return false;
-	//
-	//Offset::ViewAngle = TempAddress + Offset::Signatures::ClientInput_ViewAngle - ClientDLL;
-	//
-	//TempAddress = SearchOffsets(Offset::Signatures::Prediction, ClientDLL);
-	//if (TempAddress == 0)
-	//	return false;
-
-	//Offset::LocalPlayerPawn = TempAddress + Offset::Signatures::Prediction_LocalPlayerPawn - ClientDLL;
-
-	//TempAddress = SearchOffsets(Offset::Signatures::ForceJump, ClientDLL);
-	//if (TempAddress == 0)
-	//	return false;
-
-	//Offset::ForceJump = TempAddress + 0x30 - ClientDLL;	
-	return true;
+    struct GlobalVarOffsets GlobalVar = {
+        .RealTime = 0x00,
+        .FrameCount = 0x04,
+        .MaxClients = 0x10,
+        .IntervalPerTick = 0x14,
+        .CurrentTime = 0x30,
+        .TickCount = 0x44,
+        .IntervalPerTick2 = 0x44,
+        .CurrentMapName = 0x58
+    };
 }
