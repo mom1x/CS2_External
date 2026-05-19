@@ -2,72 +2,30 @@
 
 DWORD64 SearchOffsets(std::string Signature, DWORD64 ModuleAddress)
 {
-	std::vector<DWORD64> TempAddressList;
-	DWORD64 Address = 0;
-	DWORD Offsets = 0;
+std::vector<DWORD64> TempAddressList;
+DWORD64 Address = 0;
+DWORD Offsets = 0;
 
-	TempAddressList = ProcessMgr.SearchMemory(Signature, ModuleAddress, ModuleAddress + 0x4000000);
-	
-	if (TempAddressList.size() <= 0)
-		return 0;
+TempAddressList = ProcessMgr.SearchMemory(Signature, ModuleAddress, ModuleAddress + 0x4000000);
 
-	if (!ProcessMgr.ReadMemory<DWORD>(TempAddressList.at(0) + 3, Offsets))
-		return 0;
+if (TempAddressList.size() <= 0)
+return 0;
 
-	Address = TempAddressList.at(0) + Offsets + 7;
-	return Address;
+if (!ProcessMgr.ReadMemory<DWORD>(TempAddressList.at(0) + 3, Offsets))
+return 0;
+
+Address = TempAddressList.at(0) + Offsets + 7;
+return Address;
 }
 
 bool Offset::UpdateOffsets()
 {
-	DWORD64 ClientDLL = reinterpret_cast<DWORD64>(ProcessMgr.GetProcessModuleHandle("client.dll"));
-	if (ClientDLL == 0)
-		return false;
-	
-	DWORD64 TempAddress = 0;
+DWORD64 ClientDLL = reinterpret_cast<DWORD64>(ProcessMgr.GetProcessModuleHandle("client.dll"));
+if (ClientDLL == 0)
+return false;
 
-	//TempAddress = SearchOffsets(Offset::Signatures::EntityList, ClientDLL);
-	//if (TempAddress == 0)
-	//	return false;
-	//
-	//Offset::EntityList = TempAddress - ClientDLL;
+// Поиск по сигнатурам отключен для стабильности.
+// Чит автоматически использует новые адреса из файла Offsets.h
 
-	//TempAddress = SearchOffsets(Offset::Signatures::LocalPlayerController, ClientDLL);
-	//if (TempAddress == 0)
-	//	return false;
-	//
-	//Offset::LocalPlayerController = TempAddress - ClientDLL;
-
-	//TempAddress = SearchOffsets(Offset::Signatures::ViewMatrix, ClientDLL);
-	//if (TempAddress == 0)
-	//	return false;
-	//
-	//Offset::Matrix = TempAddress - ClientDLL;
-
-	//TempAddress = SearchOffsets(Offset::Signatures::GlobalVars, ClientDLL);
-	//if (TempAddress == 0)
-	//	return false;
-	//
-	//Offset::GlobalVars = TempAddress - ClientDLL;
-
-	//TempAddress = SearchOffsets(Offset::Signatures::ClientInput, ClientDLL);
-	//if (TempAddress == 0)
-	//	return false;
-	//if (!ProcessMgr.ReadMemory(TempAddress, TempAddress))
-	//	return false;
-	//
-	//Offset::ViewAngle = TempAddress + Offset::Signatures::ClientInput_ViewAngle - ClientDLL;
-	//
-	//TempAddress = SearchOffsets(Offset::Signatures::Prediction, ClientDLL);
-	//if (TempAddress == 0)
-	//	return false;
-
-	//Offset::LocalPlayerPawn = TempAddress + Offset::Signatures::Prediction_LocalPlayerPawn - ClientDLL;
-
-	//TempAddress = SearchOffsets(Offset::Signatures::ForceJump, ClientDLL);
-	//if (TempAddress == 0)
-	//	return false;
-
-	//Offset::ForceJump = TempAddress + 0x30 - ClientDLL;	
-	return true;
+return true;
 }
